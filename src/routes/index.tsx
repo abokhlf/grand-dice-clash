@@ -46,7 +46,7 @@ function Index() {
 
   const guard = () => {
     if (!user) {
-      void navigate({ to: "/auth", search: {} });
+      void navigate({ to: "/auth", search: { next: undefined } });
       return false;
     }
     return true;

@@ -105,3 +105,10 @@ export const equipItemFn = createServerFn({ method: "POST" })
     const g = await import("./game.server");
     return await g.equipItem(await g.admin(), context.userId, data.itemId);
   });
+
+export const myProfileFn = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const g = await import("./game.server");
+    return await g.getProfile(await g.admin(), context.userId);
+  });

@@ -1,14 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Coins, LogOut, Store, Trophy, User as UserIcon, Volume2, VolumeX } from "lucide-react";
+import { Coins, LogOut, ShieldCheck, Store, Trophy, User as UserIcon, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { isMuted, setMuted, sfx } from "@/lib/sound";
 import { Button } from "@/components/ui/button";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile } = useProfile();
+  const { isAdmin } = useIsAdmin();
   const [muted, setLocalMuted] = useState(false);
 
   useEffect(() => setLocalMuted(isMuted()), []);
@@ -49,6 +51,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="icon" asChild aria-label="ملفي">
             <Link to="/profile"><UserIcon className="h-5 w-5" /></Link>
           </Button>
+          {isAdmin && (
+            <Button variant="ghost" size="icon" asChild aria-label="لوحة التحكم">
+              <Link to="/admin"><ShieldCheck className="h-5 w-5 text-primary" /></Link>
+            </Button>
+          )}
           {profile && (
             <Button
               variant="ghost"

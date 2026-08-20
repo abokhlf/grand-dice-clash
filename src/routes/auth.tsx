@@ -61,7 +61,7 @@ function AuthPage() {
       return;
     }
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -69,11 +69,20 @@ function AuthPage() {
         data: { username: username.trim(), avatar },
       },
     });
-    setBusy(false);
     if (error) {
+      setBusy(false);
       toast.error(error.message.includes("already") ? "هذا البريد مسجّل بالفعل" : "تعذر إنشاء الحساب");
       return;
     }
+    if (!data.session) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        setBusy(false);
+        toast.info("تحقق من بريدك لتأكيد الحساب ثم سجّل الدخول");
+        return;
+      }
+    }
+    setBusy(false);
     sfx.win();
     toast.success("أهلاً بك في الديوان!");
     void navigate({ to: target });

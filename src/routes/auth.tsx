@@ -39,7 +39,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: target });
+      if (data.session) void navigate({ to: target });
     });
   }, [navigate, target]);
 
@@ -47,13 +47,19 @@ function AuthPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return toast.error("تعذر تسجيل الدخول: تحقق من البريد وكلمة المرور");
+    if (error) {
+      toast.error("تعذر تسجيل الدخول: تحقق من البريد وكلمة المرور");
+      return;
+    }
     sfx.home();
-    navigate({ to: target });
+    void navigate({ to: target });
   };
 
   const signUp = async () => {
-    if (username.trim().length < 2) return toast.error("اكتب اسم لاعب مناسب");
+    if (username.trim().length < 2) {
+      toast.error("اكتب اسم لاعب مناسب");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
@@ -64,19 +70,25 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message.includes("already") ? "هذا البريد مسجّل بالفعل" : "تعذر إنشاء الحساب");
+    if (error) {
+      toast.error(error.message.includes("already") ? "هذا البريد مسجّل بالفعل" : "تعذر إنشاء الحساب");
+      return;
+    }
     sfx.win();
     toast.success("أهلاً بك في الديوان!");
-    navigate({ to: target });
+    void navigate({ to: target });
   };
 
   const google = async () => {
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-    if (result.error) return toast.error("تعذر الدخول عبر جوجل");
+    if (result.error) {
+      toast.error("تعذر الدخول عبر جوجل");
+      return;
+    }
     if (result.redirected) return;
-    navigate({ to: target });
+    void navigate({ to: target });
   };
 
   return (

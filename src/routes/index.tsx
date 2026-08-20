@@ -45,6 +45,7 @@ function Index() {
   const join = useServerFn(joinRoomFn);
 
   const guard = () => {
+    if (isLoading) return false;
     if (!user) {
       void navigate({ to: "/auth", search: { next: undefined } });
       return false;

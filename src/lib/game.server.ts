@@ -185,7 +185,7 @@ export async function startMatch(db: Admin, userId: string, roomId: string) {
   if (seats.length < 2) throw new Error("تحتاج لاعبين اثنين على الأقل");
   const state = createInitialState(seats);
   await db.from("matches").upsert(
-    { room_id: roomId, state: state as unknown as Record<string, unknown>, status: "playing", winner_order: [] },
+    { room_id: roomId, state: state as unknown as never, status: "playing", winner_order: [] },
     { onConflict: "room_id" },
   );
   await db.from("rooms").update({ status: "playing" }).eq("id", roomId);
@@ -203,7 +203,7 @@ async function saveState(db: Admin, roomId: string, state: GameState) {
   await db
     .from("matches")
     .update({
-      state: state as unknown as Record<string, unknown>,
+      state: state as unknown as never,
       status: finished ? "finished" : "playing",
       winner_order: state.ranking,
     })
@@ -330,10 +330,14 @@ export async function buyItem(db: Admin, userId: string, itemId: string) {
     await db.from("player_items").insert({ user_id: userId, item_id: itemId });
     await db.from("profiles").update({ coins: profile.coins - item.price }).eq("id", userId);
   }
-  const field =
-    item.kind === "piece" ? "equipped_piece" : item.kind === "board" ? "equipped_board" : "equipped_dice";
-  await db.from("profiles").update({ [field]: itemId }).eq("id", userId);
+  await equipField(db, userId, item.kind, itemId);
   return { ok: true };
+}
+
+async function equipField(db: Admin, userId: string, kind: string, itemId: string) {
+  if (kind === "piece") await db.from("profiles").update({ equipped_piece: itemId }).eq("id", userId);
+  else if (kind === "board") await db.from("profiles").update({ equipped_board: itemId }).eq("id", userId);
+  else await db.from("profiles").update({ equipped_dice: itemId }).eq("id", userId);
 }
 
 export async function equipItem(db: Admin, userId: string, itemId: string) {
@@ -348,9 +352,7 @@ export async function equipItem(db: Admin, userId: string, itemId: string) {
       .maybeSingle();
     if (!owned) throw new Error("لا تملك هذا العنصر");
   }
-  const field =
-    item.kind === "piece" ? "equipped_piece" : item.kind === "board" ? "equipped_board" : "equipped_dice";
-  await db.from("profiles").update({ [field]: itemId }).eq("id", userId);
+  await equipField(db, userId, item.kind, itemId);
   return { ok: true };
 }
 

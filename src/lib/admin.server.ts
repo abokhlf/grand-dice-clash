@@ -45,7 +45,7 @@ export async function listRooms(db: Admin) {
 export async function updatePlayer(
   db: Admin,
   userId: string,
-  patch: { coins?: number; username?: string; wins?: number; games?: number },
+  patch: { coins?: number | undefined; username?: string | undefined; wins?: number | undefined; games?: number | undefined },
 ) {
   const { error } = await db.from("profiles").update(patch).eq("id", userId);
   if (error) throw new Error(error.message);

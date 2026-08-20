@@ -320,10 +320,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          avatar: string | null
+          best_streak: number | null
+          equipped_board: string | null
+          equipped_dice: string | null
+          equipped_piece: string | null
+          games: number | null
+          id: string | null
+          streak: number | null
+          username: string | null
+          wins: number | null
+        }
+        Insert: {
+          avatar?: string | null
+          best_streak?: number | null
+          equipped_board?: string | null
+          equipped_dice?: string | null
+          equipped_piece?: string | null
+          games?: number | null
+          id?: string | null
+          streak?: number | null
+          username?: string | null
+          wins?: number | null
+        }
+        Update: {
+          avatar?: string | null
+          best_streak?: number | null
+          equipped_board?: string | null
+          equipped_dice?: string | null
+          equipped_piece?: string | null
+          games?: number | null
+          id?: string | null
+          streak?: number | null
+          username?: string | null
+          wins?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      is_room_member: {
+        Args: { _room_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

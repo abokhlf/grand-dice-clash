@@ -141,7 +141,7 @@ function RoomPage() {
   const doRoll = async () => {
     if (!roomId) return;
     setRolling(true);
-    sfx.roll();
+    sfx.dice();
     try {
       await roll({ data: { roomId } });
     } catch (error) {
@@ -154,7 +154,7 @@ function RoomPage() {
 
   const doMove = async (piece: number) => {
     if (!roomId) return;
-    sfx.move();
+    sfx.step();
     try {
       await move({ data: { roomId, piece } });
     } catch (error) {
@@ -241,8 +241,8 @@ function RoomPage() {
                 <LudoBoard
                   state={state}
                   movablePieces={movable}
-                  activeColor={activeSeat?.color}
-                  myColor={myColor}
+                  activeColor={activeSeat?.color ?? null}
+                  myColor={myColor ?? null}
                   onPieceClick={(piece) => void doMove(piece)}
                 />
               </div>

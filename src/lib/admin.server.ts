@@ -47,7 +47,9 @@ export async function updatePlayer(
   userId: string,
   patch: { coins?: number | undefined; username?: string | undefined; wins?: number | undefined; games?: number | undefined },
 ) {
-  const { error } = await db.from("profiles").update(patch).eq("id", userId);
+  const clean: Record<string, number | string> = {};
+  for (const [key, value] of Object.entries(patch)) if (value !== undefined) clean[key] = value;
+  const { error } = await db.from("profiles").update(clean as never).eq("id", userId);
   if (error) throw new Error(error.message);
   return { ok: true };
 }
